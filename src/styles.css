@@ -1,0 +1,118 @@
+.dashboard-container {
+  font-family: "Arial", sans-serif;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.subtitle {
+  color: #777;
+  font-size: 1em;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.summary-section,
+.charts-section,
+.insights-section {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.summary-section h2,
+.charts-section h2,
+.insights-section h2 {
+  color: #0056b3;
+  margin-top: 0;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.metric-card {
+  background-color: #f0f8ff; /* Light blue background */
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.metric-card:hover {
+  transform: scale(1.05);
+}
+
+.metric-card h3 {
+  margin-top: 0;
+  font-size: 1.3em;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.metric-card p {
+  font-size: 2em;
+  font-weight: bold;
+  color: #007bff; /* Blue for metrics */
+  margin-bottom: 0;
+}
+
+.charts-section .chart-container {
+  margin-bottom: 30px;
+}
+
+.chart-caption {
+  font-size: 0.9em;
+  color: #777;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.insights-list {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.insights-list li {
+  line-height: 1.6;
+  margin-bottom: 10px;
+  position: relative;
+  padding-left: 25px; /* Space for bullet point */
+}
+
+.insights-list li:before {
+  content: "\\2022"; /* Bullet point */
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  color: #007bff; /* Bullet color */
+}
+
+footer {
+  text-align: center;
+  margin-top: 50px;
+  padding-top: 20px;
+  color: #777;
+  border-top: 1px solid #eee;
+}
