@@ -1,148 +1,241 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './styles.css';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-export default function App() {
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const csvData = `Ad group performance,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"January 1, 2025 - January 23, 2025",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Ad group,Campaign,Campaign state,Ad group state,Campaign type,Campaign subtype,Labels on Ad group,Ad group bid strategy,Ad group bid strategy type,Ad group sitelinks: active,Ad group sitelinks: disapproved,Ad group sitelinks level,Ad group phone numbers: active,Ad group phone numbers: disapproved,Ad group phone numbers level,Ad group apps: active,Ad group apps: disapproved,Ad group apps level,Ad group desktop bid adj.,Ad group mobile bid adj.,Ad group tablet bid adj.,Ads: active,Ads: disapproved,Keywords: active,Keywords: disapproved,Clicks,Impr.,CTR,Currency code,Avg. CPC,Cost,Impr. (Abs. Top) %,Impr. (Top) %,Conversions,View-through conv.,Cost / conv.,Conv. rate
+алматы домик в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
+алматы домики в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,6,64,"9,38%",USD,"0,19","1,14","39,34%","54,1%",0,0,0,0%
+аренда домиков в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,58,237,"24,47%",USD,"0,22","12,55","48,34%","82,46%",0,0,0,0%
+аренда юрты в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,4,50%,USD,"0,23","0,46",25%,25%,0,0,0,0%
+база отдыха алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,69,806,"8,56%",USD,"0,24","16,7","28,32%","52,21%",3,0,"5,57","4,35%"
+база отдыха в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,39,220,"17,73%",USD,"0,29","11,48","37,85%","67,76%",1,0,"11,48","2,56%"
+базы отдыха в алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,5,84,"5,95%",USD,"0,2","1,02",20%,65%,0,0,0,0%
+гостевые дома в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,18,98,"18,37%",USD,"0,27","4,89","29,47%","71,58%",0,0,0,0%
+гостиница алматы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,10,157,"6,37%",USD,"0,25","2,47","8,63%","62,59%",0,0,0,0%
+гостиницы алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,28,504,"5,56%",USD,"0,25","6,96","9,79%","47,18%","0,5",0,"13,86","1,79%"
+гостиницы в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,15,163,"9,2%",USD,"0,17","2,57",10%,"63,13%",0,0,0,0%
+дома отдыха алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,30,235,"12,77%",USD,"0,22","6,65","28,05%","54,75%",4,0,"1,66","13,33%"
+домик в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,27,155,"17,42%",USD,"0,22","5,81","42,76%","78,62%",0,0,0,0%
+домики в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,4,0,103,434,"23,73%",USD,"0,22","22,43","43,28%","78,97%",5,0,"4,49","4,85%"
+отдых в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,87,414,"21,01%",USD,"0,3","26,24","53,3%","75,38%",4,0,"6,56","4,6%"
+отели алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,44,561,"7,84%",USD,"0,22","9,83","18,62%","56,16%",3,0,"3,28","6,82%"
+""";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch('/api/data'); // Запрос к API endpoint Vercel
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+const cleanValue = (value) => {
+    let cleanedValue = value.replace('%', '').replace('"', '').replace(',', '.');
+    if (cleanedValue === 'USD' || cleanedValue === '--') {
+        return '0';
+    }
+    return cleanedValue;
+}
+
+const parseCSVData = (csvString) => {
+    const data = [];
+    const lines = csvString.trim().split('\n');
+    const headers = lines[2].split(',').map(header => header.trim());
+    for (let i = 3; i < lines.length; i++) {
+        const row = lines[i].split(',');
+        if (row && row[0] !== 'Ad group performance') {
+            const adGroupData = {};
+            for (let j = 0; j < headers.length; j++) {
+                const header = headers[j];
+                let value = row[j] ? row[j].trim() : '';
+                const cleanedValue = cleanValue(value);
+                if (["Clicks", "Impr.", "Conversions"].includes(header)) {
+                    adGroupData[header] = parseInt(parseFloat(cleanedValue));
+                } else if (["CTR", "Avg. CPC", "Cost", "Impr. (Abs. Top) %", "Impr. (Top) %", "Cost / conv.", "Conv. rate"].includes(header)) {
+                    adGroupData[header] = parseFloat(cleanedValue);
+                } else {
+                    adGroupData[header] = value;
+                }
+            }
+            data.push(adGroupData);
         }
-        const json = await response.json();
-        setDashboardData(json);
-      } catch (e) {
-        console.error("Ошибка загрузки данных:", e);
-        setError(e);
-      } finally {
-        setLoading(false);
-      }
+    }
+    return data;
+};
+
+const calculateTotals = (data) => {
+    let totalClicks = 0;
+    let totalImpressions = 0;
+    let totalCost = 0;
+    let totalConversions = 0;
+
+    data.forEach(item => {
+        totalClicks += item['Clicks'];
+        totalImpressions += item['Impr.'];
+        totalCost += item['Cost'];
+        totalConversions += item['Conversions'];
+    });
+
+    const totalCtr = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
+    const avgCpc = totalClicks > 0 ? totalCost / totalClicks : 0;
+    const totalConvRate = totalClicks > 0 ? (totalConversions / totalClicks) * 100 : 0;
+    const avgCostPerConv = totalConversions > 0 ? totalCost / totalConversions : 0;
+
+    return {
+        total_clicks: totalClicks,
+        total_impressions: totalImpressions,
+        total_cost: totalCost,
+        total_conversions: totalConversions,
+        total_ctr: totalCtr,
+        avg_cpc: avgCpc,
+        total_conv_rate: totalConvRate,
+        avg_cost_per_conv: avgCostPerConv
     };
+};
 
-    fetchData();
-  }, []);
+const analyzePerformance = (data) => {
+    const insights = [];
 
-  if (loading) {
-    return <div className="loading">Загрузка данных...</div>;
-  }
+    const noConversionAdGroups = data.filter(item => item.Conversions === 0 && parseFloat(item.Cost) > 0).map(item => item["Ad group"]);
+    if (noConversionAdGroups.length > 0) {
+        insights.push(
+            `Группы объявлений с расходами, но без конверсий: ${noConversionAdGroups.join(', ')}. Рекомендовано проверить релевантность и посадочные страницы.`
+        );
+    }
 
-  if (error) {
-    return <div className="error">Ошибка загрузки данных: {error.message}</div>;
-  }
+    const highCpcConvAdGroups = data.filter(item => item.Conversions > 0 && parseFloat(item["Cost / conv."]) > 8).map(item => item["Ad group"]);
+    if (highCpcConvAdGroups.length > 0) {
+        insights.push(
+            `Группы объявлений с высокой стоимостью конверсии: ${highCpcConvAdGroups.join(', ')}. Необходимо проанализировать ставки и качество объявлений.`
+        );
+    }
 
-  const { totals, insights, pieChartData, barChartData } = dashboardData;
+    const highCtrLowConvAdGroups = data.filter(item => parseFloat(item.CTR) > 15 && parseFloat(item["Conv. rate"]) < 2 && item.Clicks > 10).map(item => item["Ad group"]);
+    if (highCtrLowConvAdGroups.length > 0) {
+        insights.push(
+            `Группы объявлений с высоким CTR, но низкой конверсией: ${highCtrLowConvAdGroups.join(', ')}. Проверьте соответствие объявлений и посадочных страниц, проблемы с UX.`
+        );
+    }
 
+    const topConversionAdGroups = data.filter(item => item.Conversions > 0)
+        .sort((a, b) => b.Conversions - a.Conversions)
+        .slice(0, 3)
+        .map(item => item["Ad group"]);
+    if (topConversionAdGroups.length > 0) {
+        insights.push(
+            `Топ-3 групп объявлений по конверсиям: ${topConversionAdGroups.join(', ')}. Рассмотрите масштабирование: увеличьте бюджеты или расширьте таргетинг.`
+        );
+    }
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#a4de6c', '#d0ed57', '#ffc658'];
+    return insights;
+};
+
+const parsedData = parseCSVData(csvData);
+const totals = calculateTotals(parsedData);
+const insights = analyzePerformance(parsedData);
+
+// Данные для круговой диаграммы
+const pieChartData = parsedData.sort((a, b) => parseFloat(b.Cost) - parseFloat(a.Cost)).slice(0, 5).map(item => ({ name: item["Ad group"], value: parseFloat(item.Cost) }));
+const otherCost = totals.total_cost - pieChartData.reduce((sum, item) => sum + item.value, 0);
+pieChartData.push({ name: 'Остальные', value: otherCost > 0 ? otherCost : 0 });
+
+// Данные для столбчатой диаграммы
+const barChartData = parsedData.sort((a, b) => b['Impr.'] - a['Impr.']).slice(0, 10).map(item => ({ name: item["Ad group"], ctr: parseFloat(item.CTR), convRate: parseFloat(item["Conv. rate"])}))
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#a4de6c', '#d0ed57', '#ffc658'];
+
 
   return (
-    <div className="dashboard-container">
-      <header>
-        <h1>Дашборд эффективности рекламы</h1>
-        <p className="subtitle">Период: 1 - 23 января 2025</p>
-      </header>
+    
+      
+        
+          
+            <h1>Ad Campaign Performance Dashboard</h1>
+            
+          
+          
+            
+              
+                
+                  
+                    <h3>Clicks</h3>
+                    
+                  
+                  
+                    <h3>Impressions</h3>
+                    
+                  
+                  
+                    <h3>CTR</h3>
+                    
+                  
+                  
+                    <h3>Total Cost</h3>
+                    
+                  
+                  
+                    <h3>Conversions</h3>
+                    
+                  
+                  
+                    <h3>Conv. Rate</h3>
+                    
+                  
+                  
+                    <h3>Avg. CPC</h3>
+                    
+                  
+                  
+                    <h3>Cost / Conv.</h3>
+                    
+                  
+                
+              
+            
+    
 
-      <main>
-        <section className="summary-section">
-          <h2>Сводка основных показателей</h2>
-          <div className="metric-grid">
-            <div className="metric-card">
-              <h3>Клики</h3>
-              <p>{totals.total_clicks}</p>
-            </div>
-            <div className="metric-card">
-              <h3>Показы</h3>
-              <p>{totals.total_impressions}</p>
-            </div>
-            <div className="metric-card">
-              <h3>CTR</h3>
-              <p>{totals.total_ctr.toFixed(2)}%</p>
-            </div>
-            <div className="metric-card">
-              <h3>Общая стоимость</h3>
-              <p>{totals.total_cost.toFixed(2)} USD</p>
-            </div>
-            <div className="metric-card">
-              <h3>Конверсии</h3>
-              <p>{totals.total_conversions}</p>
-            </div>
-            <div className="metric-card">
-              <h3>Коэффициент конверсии</h3>
-              <p>{totals.total_conv_rate.toFixed(2)}%</p>
-            </div>
-            <div className="metric-card">
-              <h3>Средняя цена за клик</h3>
-              <p>{totals.avg_cpc.toFixed(2)} USD</p>
-            </div>
-            <div className="metric-card">
-              <h3>Стоимость конверсии</h3>
-              <p>{totals.avg_cost_per_conv.toFixed(2)} USD</p>
-            </div>
-          </div>
-        </section>
+            
+              
+                
+                  
+                    
+                      
+                        
+                      
+                    
+                    
+                      Cost Distribution by Ad Groups
+                    
+                  
+                
+                
+                  
+                    
+                      
+                        
+                      
+                    
+                    
+                      CTR vs Conversion Rate (Top 10 by Impr.)
+                    
+                  
+                
+              
+            
+    
 
-        <section className="charts-section">
-          <h2>Визуализация данных</h2>
-          <div className="chart-container">
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart data={pieChartData}>
-                <Pie
-                  dataKey="value"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  fill="#8884d8"
-                  labelLine={false}
-                  label
-                >
-                  {pieChartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+            
+              
+                <h2>Insights and Recommendations</h2>
+                
+                  {insights.map((insight, index) => (
+                    
+                      {insight}
+                    
                   ))}
-                </Pie>
-                <Legend />
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <p className="chart-caption">Распределение расходов по группам объявлений</p>
-          </div>
+                
+              
+            
+    
 
-          <div className="chart-container">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis yAxisId="left" label={{ value: 'CTR (%)', angle: -90, position: 'insideLeft' }} />
-                <YAxis yAxisId="right" orientation="right" label={{ value: 'Conv. Rate (%)', angle: -90, position: 'insideRight' }} />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="ctr" barSize={20} fill="#413ea0" yAxisId="left" name="CTR" />
-                <Bar dataKey="convRate" barSize={20} fill="#82ca9d" yAxisId="right" name="Conv. Rate" />
-              </BarChart>
-            </ResponsiveContainer>
-            <p className="chart-caption">CTR и коэффициент конверсии по группам объявлений</p>
-          </div>
-        </section>
-
-        <section className="insights-section">
-          <h2>Инсайты и рекомендации</h2>
-          <ul className="insights-list">
-            {insights.map((insight, index) => (
-              <li key={index}>{insight}</li>
-            ))}
-          </ul>
-        </section>
-      </main>
-
-      <footer>
-        <p>© 2025 Дашборд эффективности рекламы</p>
-      </footer>
-    </div>
+      
+        
+      
+    
   );
 }
+
+export default App;
