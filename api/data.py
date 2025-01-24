@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify
 import csv
 from io import StringIO
@@ -11,12 +12,12 @@ Ad group,Campaign,Campaign state,Ad group state,Campaign type,Campaign subtype,L
 алматы домики в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,6,64,"9,38%",USD,"0,19","1,14","39,34%","54,1%",0,0,0,0%
 аренда домиков в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,58,237,"24,47%",USD,"0,22","12,55","48,34%","82,46%",0,0,0,0%
 аренда юрты в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,4,50%,USD,"0,23","0,46",25%,25%,0,0,0,0%
-база отдыха oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
+база отдыха oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 база отдыха алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,69,806,"8,56%",USD,"0,24","16,7","28,32%","52,21%",3,0,"5,57","4,35%"
 база отдыха алматы цена,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 база отдыха в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,39,220,"17,73%",USD,"0,29","11,48","37,85%","67,76%",1,0,"11,48","2,56%"
 база отдыха в горах цена,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-база отдыха лесная сказка,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
+база отдыха лесная сказка,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 базы отдыха в алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,5,84,"5,95%",USD,"0,2","1,02",20%,65%,0,0,0,0%
 где в алмате можно отдохнуть на природе,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,1,0%,USD,0,0,0%,100%,0,0,0,0%
 где можно отдохнуть в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,1,0%,USD,0,0,100%,100%,0,0,0,0%
@@ -29,7 +30,7 @@ Ad group,Campaign,Campaign state,Ad group state,Campaign type,Campaign subtype,L
 деревенька на деревьях,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,1,4,25%,USD,"0,26","0,26",75%,75%,0,0,0,0%
 дом на дереве алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 дом на дереве цена алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-дом отдыха в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,5,0%,USD,0,0,0%,0%,0%,0,0,0,0%
+дом отдыха в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,5,0%,USD,0,0,0%,0%,0,0,0,0%
 дома отдыха алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,30,235,"12,77%",USD,"0,22","6,65","28,05%","54,75%",4,0,"1,66","13,33%"
 домик в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,7,48,"14,58%",USD,"0,35","2,44","58,54%","68,29%",0,0,0,0%
 домик в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,27,155,"17,42%",USD,"0,22","5,81","42,76%","78,62%",0,0,0,0%
@@ -42,20 +43,20 @@ Ad group,Campaign,Campaign state,Ad group state,Campaign type,Campaign subtype,L
 домики на деревьях,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 домики на деревьях oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 домики на деревьях алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,2,100%,USD,"0,15","0,29",50%,100%,0,0,0,0%
-забронировать базу отдыха oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
+забронировать базу отдыха oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 забронировать базу отдыха в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 забронировать базу отдыха лесная сказка,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 забронировать базу отдыха ой карагай,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-забронировать гостиницу oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
+забронировать гостиницу oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 забронировать гостиницу в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-забронировать гостиницу лесная сказка,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
-забронировать гостиницу ой карагай,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
-забронировать зону отдыха oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
+забронировать гостиницу лесная сказка,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
+забронировать гостиницу ой карагай,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
+забронировать зону отдыха oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 забронировать зону отдыха в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 забронировать зону отдыха лесная сказка,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 забронировать зону отдыха ой карагай,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 забронировать отель oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
-забронировать отель в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
+забронировать отель в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 забронировать отель лесная сказка,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 забронировать отель ой карагай,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 зоны отдыха,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,12,210,"5,71%",USD,"0,13","1,59","18,38%","42,65%",0,0,0,0%
@@ -67,7 +68,7 @@ Ad group,Campaign,Campaign state,Ad group state,Campaign type,Campaign subtype,L
 отели oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 отели алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,44,561,"7,84%",USD,"0,22","9,83","18,62%","56,16%",3,0,"3,28","6,82%"
 отели алматы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,23,263,"8,75%",USD,"0,22","5,17","10,84%","65,46%",0,0,0,0%
-отели алматы в горах цена,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
+отели алматы в горах цена,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 отели алматы недорого,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,6,289,"2,08%",USD,"0,21","1,24","1,72%","29,74%",0,0,0,0%
 отели алматы цена,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 отели в горах oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
@@ -82,7 +83,7 @@ Ad group,Campaign,Campaign state,Ad group state,Campaign type,Campaign subtype,L
 семейный отдых в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,14,"14,29%",USD,"0,19","0,37","53,85%","61,54%",0,0,0,0%
 снять домик в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,10,52,"19,23%",USD,"0,27","2,68","61,22%","81,63%",1,0,"2,68",10%
 снять домик в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,8,24,"33,33%",USD,"0,21","1,71","58,33%","87,5%",0,0,0,0%
-снять домик на дереве алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
+снять домик на дереве алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 спа отель алматы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,2,100%,USD,"0,39","0,78",0%,100%,0,0,0,0%
 эко отель в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,3,19,"15,79%",USD,"0,21","0,63","23,53%","70,59%",0,0,0,0%
 эко отель в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,14,119,"11,76%",USD,"0,27","3,73","14,04%","64,04%",0,0,0,0%
@@ -219,17 +220,23 @@ def analyze_performance(data):
 
 @app.route('/api/data')
 def get_dashboard_data():
+    dashboard_data = calculate_dashboard_data() # Вызов функции для расчета данных
+    return jsonify(dashboard_data)
+
+def calculate_dashboard_data():
     parsed_data = parse_csv_data(csv_data_string)
     totals = calculate_totals(parsed_data)
-    insights, pie_chart_data, bar_chart_data = analyze_performance(parsed_data) # Вызов analyze_performance, который возвращает 3 значения
-    
-    dashboard_data =  { # Формируем словарь dashboard_data
+    insights, pie_chart_data, bar_chart_data = analyze_performance(parsed_data)
+
+    dashboard_data = {
         'totals': totals,
         'insights': insights,
         'pieChartData': pie_chart_data,
         'barChartData': bar_chart_data,
     }
-    return jsonify(dashboard_data)
+    return dashboard_data
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
