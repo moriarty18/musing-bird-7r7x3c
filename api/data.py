@@ -1,63 +1,61 @@
-
+from flask import Flask, jsonify
 import csv
 from io import StringIO
-import json
-from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-csv_data_string = """Ad group performance,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-"January 1, 2025 - January 23, 2025",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-Ad group,Campaign,Campaign state,Ad group state,Campaign type,Campaign subtype,Labels on Ad group,Ad group bid strategy,Ad group bid strategy type,Ad group sitelinks: active,Ad group sitelinks: disapproved,Ad group sitelinks level,Ad group phone numbers: active,Ad group phone numbers: disapproved,Ad group phone numbers level,Ad group apps: active,Ad group apps: disapproved,Ad group apps level,Ad group desktop bid adj.,Ad group mobile bid adj.,Ad group tablet bid adj.,Ads: active,Ads: disapproved,Keywords: active,Keywords: disapproved,Clicks,Impr.,CTR,Currency code,Avg. CPC,Cost,Impr. (Abs. Top) %,Impr. (Top) %,Conversions,View-through conv.,Cost / conv.,Conv. rate
-алматы домик в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-алматы домики в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,6,64,"9,38%",USD,"0,19","1,14","39,34%","54,1%",0,0,0,0%
-аренда домиков в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,58,237,"24,47%",USD,"0,22","12,55","48,34%","82,46%",0,0,0,0%
-аренда юрты в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,4,50%,USD,"0,23","0,46",25%,25%,0,0,0,0%
-база отдыха oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
-база отдыха алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,69,806,"8,56%",USD,"0,24","16,7","28,32%","52,21%",3,0,"5,57","4,35%"
-база отдыха алматы цена,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-база отдыха в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,39,220,"17,73%",USD,"0,29","11,48","37,85%","67,76%",1,0,"11,48","2,56%"
-база отдыха в горах цена,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-база отдыха лесная сказка,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
-базы отдыха в алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,5,84,"5,95%",USD,"0,2","1,02",20%,65%,0,0,0,0%
-где в алмате можно отдохнуть на природе,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,1,0%,USD,0,0,0%,100%,0,0,0,0%
-где можно отдохнуть в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,1,0%,USD,0,0,100%,100%,0,0,0,0%
-гостевые дома в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,18,98,"18,37%",USD,"0,27","4,89","29,47%","71,58%",0,0,0,0%
-гостиница алматы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,10,157,"6,37%",USD,"0,25","2,47","8,63%","62,59%",0,0,0,0%
-гостиницы алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,28,504,"5,56%",USD,"0,25","6,96","9,79%","47,18%","0,5",0,"13,86","1,79%"
-гостиницы алматы недорого,Oi Search Отели и брони,Enabled,Paused,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
-гостиницы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-гостиницы в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,15,163,"9,2%",USD,"0,17","2,57",10%,"63,13%",0,0,0,0%
-деревенька на деревьях,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,1,4,25%,USD,"0,26","0,26",75%,75%,0,0,0,0%
-дом на дереве алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-дом на дереве цена алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-дом отдыха в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,5,0%,USD,0,0,0%,0%,0,0,0,0%
-дома отдыха алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,30,235,"12,77%",USD,"0,22","6,65","28,05%","54,75%",4,0,"1,66","13,33%"
-домик в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,7,48,"14,58%",USD,"0,35","2,44","58,54%","68,29%",0,0,0,0%
-домик в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,27,155,"17,42%",USD,"0,22","5,81","42,76%","78,62%",0,0,0,0%
-домик в горах алматы аренда,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,23,89,"25,84%",USD,"0,21","4,72","36,47%","82,35%",0,0,0,0%
-домик на дереве алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,1,1,100%,USD,"0,12","0,12",100%,100%,0,0,0,0%
-домики в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,19,103,"18,45%",USD,"0,24","4,51","47,92%","68,75%",0,0,0,0%
-домики в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,4,0,103,434,"23,73%",USD,"0,22","22,43","43,28%","78,97%",5,0,"4,49","4,85%"
-домики в горах алматы на двоих,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,20,58,"34,48%",USD,"0,18","3,64","52,63%","80,7%",1,0,"3,64",5%
-домики в лесной сказке,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,25,156,"16,03%",USD,"0,21","5,25","38,1%","74,15%","0,46",0,"11,46","1,83%"
-домики на деревьях,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-домики на деревьях алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,2,100%,USD,"0,15","0,29",50%,100%,0,0,0,0%
-зоны отдыха,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,12,210,"5,71%",USD,"0,13","1,59","18,38%","42,65%",0,0,0,0%
-отдохнуть в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-отдых в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,87,414,"21,01%",USD,"0,3","26,24","53,3%","75,38%",4,0,"6,56","4,6%"
-отдых в горах алматы домики,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,92,432,"21,3%",USD,"0,22","20,54","43,52%","76,53%",4,0,"5,14","4,35%"
-отдых в горах с детьми,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,3,11,"27,27%",USD,"0,21","0,63",60%,60%,0,0,0,0%
-отдых в лесной сказке,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,3,"66,67%",USD,"0,19","0,37",100%,100%,0,0,0,0%
-отели алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,44,561,"7,84%",USD,"0,22","9,83","18,62%","56,16%",3,0,"3,28","6,82%"
-отели алматы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,23,263,"8,75%",USD,"0,22","5,17","10,84%","65,46%",0,0,0,0%
-отели алматы недорого,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,6,289,"2,08%",USD,"0,21","1,24","1,72%","29,74%",0,0,0,0%
-отель алматы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,16,"12,5%",USD,"0,19","0,38","18,75%","81,25%",1,0,"0,38",50%
-семейный отдых алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,45,311,"14,47%",USD,"0,18","8,12","27,89%","64,14%",1,0,"8,12","2,22%"
-снять домик в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,10,52,"19,23%",USD,"0,27","2,68","61,22%","81,63%",1,0,"2,68",10%
-снять домик в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,8,24,"33,33%",USD,"0,21","1,71","58,33%","87,5%",0,0,0,0%
-спа отель алматы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,2,100%,USD,"0,39","0,78",0%,100%,0,0,0,0%
-эко отель в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,14,119,"11,76%",USD,"0,27","3,73","14,04%","64,04%",0,0,0,0%
+csv_data_string = """Ad group,Campaign,Campaign type,Ad group bid strategy type,Ads: active,Keywords: active,Clicks,Impr.,CTR,Currency code,Avg. CPC,Cost,Impr. (Abs. Top) %,Impr. (Top) %,Conversions,Cost / conv.,Conv. rate
+алматы домик в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,0,0,USD,0,0.00,0,0,0.00,0,0
+алматы домики в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,6,64,9.38%,USD,0.19,1.14,39.34%,54.10%,0.00,0,0.00%
+аренда домиков в горах алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,58,237,24.47%,USD,0.22,12.55,48.34%,82.46%,0.00,0,0.00%
+аренда юрты в горах алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,2,4,50.00%,USD,0.23,0.46,25.00%,25.00%,0.00,0,0.00%
+база отдыха алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,69,806,8.56%,USD,0.24,16.70,28.32%,52.21%,3.00,5.57,4.35%
+база отдыха алматы цена,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,0,0,USD,0,0.00,0,0,0.00,0,0
+база отдыха в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,39,220,17.73%,USD,0.29,11.48,37.85%,67.76%,1.00,11.48,2.56%
+база отдыха в горах цена,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,0,0,USD,0,0.00,0,0,0.00,0,0
+базы отдыха в алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,5,84,5.95%,USD,0.2,1.02,20.00%,65.00%,0.00,0,0.00%
+где в алмате можно отдохнуть на природе,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,1,0.00%,USD,0,0.00,0.00%,100.00%,0.00,0,0
+где можно отдохнуть в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,1,0.00%,USD,0,0.00,100.00%,100.00%,0.00,0,0
+гостевые дома в горах алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,18,98,18.37%,USD,0.27,4.89,29.47%,71.58%,0.00,0,0.00%
+гостиница алматы в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,10,157,6.37%,USD,0.25,2.47,8.63%,62.59%,0.00,0,0.00%
+гостиницы алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,28,504,5.56%,USD,0.25,6.96,9.79%,47.18%,0.50,13.86,1.79%
+гостиницы алматы недорого,Oi Search Отели и брони,Search,Maximize Conversions,0,0,0,0,0,USD,0,0.00,0,0,0.00,0,0
+гостиницы в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,0,0,USD,0,0.00,0,0,0.00,0,0
+гостиницы в горах алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,15,163,9.20%,USD,0.17,2.57,10.00%,63.13%,0.00,0,0.00%
+деревенька на деревьях,Oi Search Отели и брони,Search,Maximize Conversions,1,3,1,4,25.00%,USD,0.26,0.26,75.00%,75.00%,0.00,0,0.00%
+дом на дереве алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,0,0,USD,0,0.00,0,0,0.00,0,0
+дом на дереве цена алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,0,0,USD,0,0.00,0,0,0.00,0,0
+дом отдыха в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,5,0.00%,USD,0,0.00,0,0,0.00,0,0
+дома отдыха алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,30,235,12.77%,USD,0.22,6.65,28.05%,54.75%,4.00,1.66,13.33%
+домик в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,7,48,14.58%,USD,0.35,2.44,58.54%,68.29%,0.00,0,0.00%
+домик в горах алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,27,155,17.42%,USD,0.22,5.81,42.76%,78.62%,0.00,0,0.00%
+домик в горах алматы аренда,Oi Search Отели и брони,Search,Maximize Conversions,1,3,23,89,25.84%,USD,0.21,4.72,36.47%,82.35%,0.00,0,0.00%
+домик на дереве алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,1,1,100.00%,USD,0.12,0.12,100.00%,100.00%,0.00,0,0.00%
+домики в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,19,103,18.45%,USD,0.24,4.51,47.92%,68.75%,0.00,0,0.00%
+домики в горах алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,4,103,434,23.73%,USD,0.22,22.43,43.28%,78.97%,5.00,4.49,4.85%
+домики в горах алматы на двоих,Oi Search Отели и брони,Search,Maximize Conversions,1,3,20,58,34.48%,USD,0.18,3.64,52.63%,80.70%,1.00,3.64,5.00%
+домики в лесной сказке,Oi Search Отели и брони,Search,Maximize Conversions,1,3,25,156,16.03%,USD,0.21,5.25,38.10%,74.15%,0.46,11.46,1.83%
+домики на деревьях,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,0,0,USD,0,0.00,0,0,0.00,0,0
+домики на деревьях алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,2,2,100.00%,USD,0.15,0.29,50.00%,100.00%,0.00,0,0.00%
+зоны отдыха,Oi Search Отели и брони,Search,Maximize Conversions,1,3,12,210,5.71%,USD,0.13,1.59,18.38%,42.65%,0.00,0,0.00%
+отдохнуть в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,0,0,USD,0,0.00,0,0,0.00,0,0
+отдых в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,87,414,21.01%,USD,0.3,26.24,53.30%,75.38%,4.00,6.56,4.60%
+отдых в горах алматы домики,Oi Search Отели и брони,Search,Maximize Conversions,1,3,92,432,21.3%,0.22,20.54,43.52%,76.53%,4.00,5.14,4.35%
+отдых в горах с детьми,Oi Search Отели и брони,Search,Maximize Conversions,1,3,3,11,27.27%,USD,0.21,0.63,60.00%,60.00%,0.00,0,0.00%
+отдых в лесной сказке,Oi Search Отели и брони,Search,Maximize Conversions,1,3,2,3,66.67%,USD,0.19,0.37,100.00%,100.00%,0.00,0,0.00%
+отели алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,44,561,7.84%,USD,0.22,9.83,18.62%,56.16%,3.00,3.28,6.82%
+отели алматы в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,23,263,8.75%,USD,0.22,5.17,10.84%,65.46%,0.00,0,0.00%
+отели алматы недорого,Oi Search Отели и брони,Search,Maximize Conversions,1,3,6,289,2.08%,USD,0.21,1.24,1.72%,29.74%,0.00,0,0.00%
+отель алматы в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,2,16,12.50%,USD,0.19,0.38,18.75%,81.25%,1.00,0.38,50.00%
+отель в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,2,51,3.92%,USD,0.05,0.1,0,0,0
+семейный отдых алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,45,311,14.47%,USD,0.18,8.12,1,8.12,2.22%
+семейный отдых в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,2,14,14.29%,USD,0.19,0.37,0,0,0
+снять домик в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,10,52,19.23%,USD,0.27,2.68,1,2.68,10.00%
+снять домик в горах алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,8,24,33.33%,USD,0.21,1.71,0,0,0
+снять домик на дереве алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,0,0,0,USD,0,0.00,0,0,0.00,0,0
+спа отель алматы в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,2,2,100.00%,USD,0.39,0.78,0,0,0
+эко отель в горах,Oi Search Отели и брони,Search,Maximize Conversions,1,3,3,19,15.79%,USD,0.21,0.63,0,0,0
+эко отель в горах алматы,Oi Search Отели и брони,Search,Maximize Conversions,1,3,14,119,11.76%,USD,0.27,3.73,0,0,0
 """.strip()
 
 def clean_value(value):
@@ -140,7 +138,7 @@ def analyze_performance(data):
     high_ctr_low_conv_ad_groups = [
         item["Ad group"]
         for item in data
-        if float(item["CTR"].replace('%', '').replace(',', '.')) > 15 and float(item["Conv. rate"].replace('%', '').replace(',', '.')) < 2 and int(item["Clicks"]) > 10 # added условие по кликам, чтобы исключить случайности
+        if float(item["CTR"].replace('%', '').replace(',', '.')) > 15 and float(item["Conv. rate"].replace('%', '').replace(',', '.')) < 2 and int(item["Clicks"]) > 10 # добавим условие по кликам, чтобы исключить случайности
     ]
     if high_ctr_low_conv_ad_groups:
         insights.append(
