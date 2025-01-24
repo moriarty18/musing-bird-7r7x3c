@@ -1,218 +1,10 @@
-from flask import Flask, jsonify
-import csv
-from io import StringIO
 
-app = Flask(__name__)
-
-csv_data_string = """Ad group,Campaign,Clicks,Impr.,CTR,Avg. CPC,Cost,Conversions,Cost / conv.,Conv. rate
-алматы домик в горах,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-алматы домики в горах,Oi Search Отели и брони,6,64,9.38%,0.19,1.14,0,0,0%
-аренда домиков в горах алматы,Oi Search Отели и брони,58,237,24.47%,0.22,12.55,0,0,0%
-аренда юрты в горах алматы,Oi Search Отели и брони,2,4,50%,0.23,0.46,0,0,0%
-база отдыха алматы,Oi Search Отели и брони,69,806,8.56%,0.24,16.7,3,5.57,4.35%
-база отдыха алматы цена,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-база отдыха в горах,Oi Search Отели и брони,39,220,17.73%,0.29,11.48,1,11.48,2.56%
-база отдыха в горах цена,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-базы отдыха в алматы,Oi Search Отели и брони,5,84,5.95%,0.2,1.02,0,0,0%
-где в алмате можно отдохнуть на природе,Oi Search Отели и брони,0,1,0%,0,0,0,0,0%
-где можно отдохнуть в горах,Oi Search Отели и брони,0,1,0%,0,0,0,0,0%
-гостевые дома в горах алматы,Oi Search Отели и брони,18,98,18.37%,0.27,4.89,0,0,0%
-гостиница алматы в горах,Oi Search Отели и брони,10,157,6.37%,0.25,2.47,0,0,0%
-гостиницы алматы,Oi Search Отели и брони,28,504,5.56%,0.25,6.96,0.5,13.86,1.79%
-гостиницы алматы недорого,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-гостиницы в горах,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-гостиницы в горах алматы,Oi Search Отели и брони,15,163,9.2%,0.17,2.57,0,0,0%
-деревенька на деревьях,Oi Search Отели и брони,1,4,25%,0.26,0.26,0,0,0%
-дом на дереве алматы,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-дом на дереве цена алматы,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-дом отдыха в горах,Oi Search Отели и брони,0,5,0%,0,0,0,0,0%
-дома отдыха алматы,Oi Search Отели и брони,30,235,12.77%,0.22,6.65,4,1.66,13.33%
-домик в горах,Oi Search Отели и брони,7,48,14.58%,0.35,2.44,0,0,0%
-домик в горах алматы,Oi Search Отели и брони,27,155,17.42%,0.22,5.81,0,0,0%
-домик в горах алматы аренда,Oi Search Отели и брони,23,89,25.84%,0.21,4.72,0,0,0%
-домик на дереве алматы,Oi Search Отели и брони,1,1,100%,0.12,0.12,0,0,0%
-домики в горах,Oi Search Отели и брони,19,103,18.45%,0.24,4.51,0,0,0%
-домики в горах алматы,Oi Search Отели и брони,103,434,23.73%,0.22,22.43,5,4.49,4.85%
-домики в горах алматы на двоих,Oi Search Отели и брони,20,58,34.48%,0.18,3.64,1,3.64,5%
-домики в лесной сказке,Oi Search Отели и брони,25,156,16.03%,0.21,5.25,0.46,11.46,1.83%
-домики на деревьях,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-домики на деревьях алматы,Oi Search Отели и брони,2,2,100%,0.15,0.29,0,0,0%
-зоны отдыха,Oi Search Отели и брони,12,210,5.71%,0.13,1.59,0,0,0%
-отдохнуть в горах,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-отдых в горах,Oi Search Отели и брони,87,414,21.01%,0.3,26.24,4,6.56,4.6%
-отдых в горах алматы домики,Oi Search Отели и брони,92,432,21.3%,0.22,20.54,4,5.14,4.35%
-отдых в горах с детьми,Oi Search Отели и брони,3,11,27.27%,0.21,0.63,0,0,0%
-отдых в лесной сказке,Oi Search Отели и брони,2,3,66.67%,0.19,0.37,0,0,0%
-отели алматы,Oi Search Отели и брони,44,561,7.84%,0.22,9.83,3,3.28,6.82%
-отели алматы в горах,Oi Search Отели и брони,23,263,8.75%,0.22,5.17,0,0,0%
-отели алматы в горах цена,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-отели алматы недорого,Oi Search Отели и брони,6,289,2.08%,0.21,1.24,0,0,0%
-отели алматы цена,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-отели в горах алматы,Oi Search Отели и брони,4,28,14.29%,0.35,1.41,0,0,0%
-отели в горах алматы цена,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-отель алматы в горах,Oi Search Отели и брони,2,16,12.5%,0.19,0.38,1,0.38,50%
-отель в горах,Oi Search Отели и брони,2,51,3.92%,0.05,0.1,0,0,0%
-семейный отдых алматы,Oi Search Отели и брони,45,311,14.47%,0.18,8.12,1,8.12,2.22%
-семейный отдых в горах,Oi Search Отели и брони,2,14,14.29%,0.19,0.37,0,0,0%
-снять домик в горах,Oi Search Отели и брони,10,52,19.23%,0.27,2.68,1,2.68,10%
-снять домик в горах алматы,Oi Search Отели и брони,8,24,33.33%,0.21,1.71,0,0,0%
-снять домик на дереве алматы,Oi Search Отели и брони,0,0,0%,0,0,0,0,0%
-спа отель алматы в горах,Oi Search Отели и брони,2,2,100%,0.39,0.78,0,0,0%
-эко отель в горах,Oi Search Отели и брони,3,19,15.79%,0.21,0.63,0,0,0%
-эко отель в горах алматы,Oi Search Отели и брони,14,119,11.76%,0.27,3.73,0,0,0%
-""".strip()
-
-def clean_value(value):
-    cleaned_value = value.replace('%', '').replace('"', '').replace(',', '.')
-    if cleaned_value == 'USD' or cleaned_value == '--':
-        return '0'
-    return cleaned_value
-
-def parse_csv_data(csv_string):
-    data = []
-    f = StringIO(csv_string)
-    reader = csv.reader(f)
-    headers = next(reader)
-    headers = next(reader)
-    for row in reader:
-        if row and row[0] != 'Ad group performance':
-            ad_group_data = {}
-            for i, header in enumerate(headers):
-                value = row[i]
-                cleaned_value = clean_value(value)
-                if header in ["Clicks", "Impr.", "Conversions", "View-through conv."]:
-                    ad_group_data[header] = int(float(cleaned_value)) if cleaned_value else 0
-                elif header in ["CTR", "Avg. CPC", "Cost", "Impr. (Abs. Top) %", "Impr. (Top) %", "Cost / conv.", "Conv. rate"]:
-                    ad_group_data[header] = float(cleaned_value) if cleaned_value else 0
-                else:
-                    ad_group_data[header] = value
-            data.append(ad_group_data)
-    return data
-
-def calculate_totals(data):
-    total_clicks = sum(item['Clicks'] for item in data)
-    total_impressions = sum(item['Impr.'] for item in data)
-    total_cost = sum(item['Cost'] for item in data)
-    total_conversions = sum(item['Conversions'] for item in data)
-
-    total_ctr = (total_clicks / total_impressions) * 100 if total_impressions > 0 else 0
-    avg_cpc = total_cost / total_clicks if total_clicks > 0 else 0
-    total_conv_rate = (total_conversions / total_clicks) * 100 if total_clicks > 0 else 0
-    avg_cost_per_conv = total_cost / total_conversions if total_conversions > 0 else 0
-
-    return {
-        "total_clicks": total_clicks,
-        "total_impressions": total_impressions,
-        "total_cost": total_cost,
-        "total_conversions": total_conversions,
-        "total_ctr": total_ctr,
-        "avg_cpc": avg_cpc,
-        "total_conv_rate": total_conv_rate,
-        "avg_cost_per_conv": avg_cost_per_conv,
-    }
-
-def analyze_performance(data):
-    insights = []
-
-    # 1. Группы объявлений без конверсий, но с расходами
-    no_conversion_ad_groups = [
-        item["Ad group"]
-        for item in data
-        if item["Conversions"] == 0 and float(item["Cost"]) > 0
-    ]
-    if no_conversion_ad_groups:
-        insights.append(
-            f"Группы объявлений с расходами, но без конверсий: {', '.join(no_conversion_ad_groups)}. "
-            "Рекомендуется проверить релевантность ключевых слов и объявлений, а также посадочные страницы."
-        )
-
-    # 2. Группы объявлений с высокой стоимостью конверсии
-    high_cpc_conv_ad_groups = [
-        item["Ad group"]
-        for item in data
-        if item["Conversions"] > 0 and float(item["Cost / conv."]) > 8  # Порог Cost / conv.
-    ]
-    if high_cpc_conv_ad_groups:
-        insights.append(
-            f"Группы объявлений с высокой стоимостью конверсии: {', '.join(high_cpc_conv_ad_groups)}. "
-            "Необходимо проанализировать ставки и качество объявлений для этих групп."
-        )
-
-    # 3. Группы объявлений с высоким CTR, но низкой конверсией (CTR > 15% и Conv. Rate < 2%)
-    high_ctr_low_conv_ad_groups = [
-        item["Ad group"]
-        for item in data
-        if float(item["CTR"].replace('%', '').replace(',', '.')) > 15 and float(item["Conv. rate"].replace('%', '').replace(',', '.')) < 2 and int(item["Clicks"]) > 10 # добавим условие по кликам, чтобы исключить случайности
-    ]
-    if high_ctr_low_conv_ad_groups:
-        insights.append(
-            f"Группы объявлений с высоким CTR, но низкой конверсией: {', '.join(high_ctr_low_conv_ad_groups)}. "
-            "Проверьте соответствие объявлений и посадочных страниц, проблемы с UX."
-        )
-
-    # 4. Лучшие группы объявлений по конверсиям (топ 3)
-    top_conversion_ad_groups = sorted(
-        [item for item in data if float(item["Conversions"]) > 0],
-        key=lambda x: float(item["Conversions"]),
-        reverse=True,
-    )[:3]
-    if top_conversion_ad_groups:
-        top_ad_group_names = ', '.join([item["Ad group"] for item in top_conversion_ad_groups])
-        insights.append(
-            f"Топ-3 групп объявлений по конверсиям: {top_ad_group_names}. "
-            "Рассмотрите масштабирование: увеличьте бюджеты или расширьте таргетинг."
-        )
-
-    # 5. Данные для графиков
-    # Топ-5 групп по расходам для круговой диаграммы
-    top_cost_ad_groups_pie = sorted(
-        data, key=lambda x: float(x["Cost"]), reverse=True
-    )[:5]
-
-    pie_chart_data = [
-        {'name': item["Ad group"], 'value': float(item["Cost"])}
-        for item in top_cost_ad_groups_pie
-    ]
-    # Добавим "Остальные"
-    other_cost = sum(float(item["Cost"]) for item in data) - sum(item['value'] for item in pie_chart_data)
-    pie_chart_data.append({'name': 'Остальные', 'value': other_cost if other_cost > 0 else 0})
-
-
-    # Топ-10 групп по показам для столбчатой диаграммы
-    top_impression_ad_groups_bar = sorted(
-        data, key=lambda x: int(x["Impr."]), reverse=True
-    )[:10]
-
-    bar_chart_data = [
-        {'name': item["Ad group"], 'ctr': float(item["CTR"].replace('%', '').replace(',', '.')), 'convRate': float(item["Conv. rate"].replace('%', '').replace(',', '.'))}
-        for item in top_impression_ad_groups_bar
-    ]
-
-    return insights, pie_chart_data, bar_chart_data
-
-
-@app.route('/api/data')
-def get_dashboard_data():
-    parsed_data = parse_csv_data(csv_data_string)
-    totals = calculate_totals(parsed_data)
-    insights, pie_chart_data, bar_chart_data = analyze_performance(parsed_data)
-
-    dashboard_data = {
-        'totals': totals,
-        'insights': insights,
-        'pieChartData': pie_chart_data,
-        'barChartData': bar_chart_data,
-    }
-    return jsonify(dashboard_data)
-
-
-
-if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=5000)
-``````tool_code
 import csv
 from io import StringIO
 import json
+from flask import Flask, jsonify
+
+app = Flask(__name__)
 
 csv_data_string = """Ad group performance,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 "January 1, 2025 - January 23, 2025",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
@@ -221,7 +13,7 @@ Ad group,Campaign,Campaign state,Ad group state,Campaign type,Campaign subtype,L
 алматы домики в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,6,64,"9,38%",USD,"0,19","1,14","39,34%","54,1%",0,0,0,0%
 аренда домиков в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,58,237,"24,47%",USD,"0,22","12,55","48,34%","82,46%",0,0,0,0%
 аренда юрты в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,4,50%,USD,"0,23","0,46",25%,25%,0,0,0,0%
-база отдыха oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
+база отдыха oi qaragai,Oi Search Отели и брони,Enabled,Removed,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 база отдыха алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,69,806,"8,56%",USD,"0,24","16,7","28,32%","52,21%",3,0,"5,57","4,35%"
 база отдыха алматы цена,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 база отдыха в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,39,220,"17,73%",USD,"0,29","11,48","37,85%","67,76%",1,0,"11,48","2,56%"
@@ -233,12 +25,12 @@ Ad group,Campaign,Campaign state,Ad group state,Campaign type,Campaign subtype,L
 гостевые дома в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,18,98,"18,37%",USD,"0,27","4,89","29,47%","71,58%",0,0,0,0%
 гостиница алматы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,10,157,"6,37%",USD,"0,25","2,47","8,63%","62,59%",0,0,0,0%
 гостиницы алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,28,504,"5,56%",USD,"0,25","6,96","9,79%","47,18%","0,5",0,"13,86","1,79%"
-гостиницы алматы недорого,Oi Search Отели и брони,Enabled,Paused,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
+гостиницы алматы недорого,Oi Search Отели и брони,Enabled,Paused,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,0,0,0,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
 гостиницы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 гостиницы в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,15,163,"9,2%",USD,"0,17","2,57",10%,"63,13%",0,0,0,0%
 деревенька на деревьях,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,1,4,25%,USD,"0,26","0,26",75%,75%,0,0,0,0%
 дом на дереве алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
-дом на дереве цена алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0%,0,0,0,0%
+дом на дереве цена алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,0,0%,USD,0,0,0%,0%,0,0,0,0%
 дом отдыха в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,0,5,0%,USD,0,0,0%,0%,0,0,0,0%
 дома отдыха алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,30,235,"12,77%",USD,"0,22","6,65","28,05%","54,75%",4,0,"1,66","13,33%"
 домик в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,7,48,"14,58%",USD,"0,35","2,44","58,54%","68,29%",0,0,0,0%
@@ -257,7 +49,16 @@ Ad group,Campaign,Campaign state,Ad group state,Campaign type,Campaign subtype,L
 отдых в горах алматы домики,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,92,432,"21,3%",USD,"0,22","20,54","43,52%","76,53%",4,0,"5,14","4,35%"
 отдых в горах с детьми,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,3,11,"27,27%",USD,"0,21","0,63",60%,60%,0,0,0,0%
 отдых в лесной сказке,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,3,"66,67%",USD,"0,19","0,37",100%,100%,0,0,0,0%
-отели алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,44,561,"7,84%",USD,"0,22","9,83","18,62%","56,16%",3,0,"3,28","6,82%"""
+отели алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,44,561,"7,84%",USD,"0,22","9,83","18,62%","56,16%",3,0,"3,28","6,82%"
+отели алматы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,23,263,"8,75%",USD,"0,22","5,17","10,84%","65,46%",0,0,0,0%
+отели алматы недорого,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,6,289,"2,08%",USD,"0,21","1,24","1,72%","29,74%",0,0,0,0%
+отель алматы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,16,"12,5%",USD,"0,19","0,38","18,75%","81,25%",1,0,"0,38",50%
+семейный отдых алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,45,311,"14,47%",USD,"0,18","8,12","27,89%","64,14%",1,0,"8,12","2,22%"
+снять домик в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,10,52,"19,23%",USD,"0,27","2,68","61,22%","81,63%",1,0,"2,68",10%
+снять домик в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,8,24,"33,33%",USD,"0,21","1,71","58,33%","87,5%",0,0,0,0%
+спа отель алматы в горах,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,2,2,100%,USD,"0,39","0,78",0%,100%,0,0,0,0%
+эко отель в горах алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,14,119,"11,76%",USD,"0,27","3,73","14,04%","64,04%",0,0,0,0%
+""".strip()
 
 def clean_value(value):
     cleaned_value = value.replace('%', '').replace('"', '').replace(',', '.')
@@ -390,16 +191,7 @@ def analyze_performance(data):
 
 @app.route('/api/data')
 def get_dashboard_data():
-    parsed_data = parse_csv_data(csv_data_string)
-    totals = calculate_totals(parsed_data)
-    insights, pie_chart_data, bar_chart_data = analyze_performance(parsed_data)
-
-    dashboard_data = {
-        'totals': totals,
-        'insights': insights,
-        'pieChartData': pie_chart_data,
-        'barChartData': bar_chart_data,
-    }
+    dashboard_data = calculate_dashboard_data() # Вызов функции для расчета данных
     return jsonify(dashboard_data)
 
 def calculate_dashboard_data():
@@ -417,31 +209,3 @@ def calculate_dashboard_data():
 
 if __name__ == '__main__':
     app.run(debug=True,host="0.0.0.0",port=5000)
-
-dashboard_data = get_dashboard_data()
-
-campaign_name = "Ad group performance"
-
-print(f"Отчет по рекламной кампании: {campaign_name}")
-print("Общая эффективность кампании:")
-print(f"  Всего кликов: {dashboard_data['totals']['total_clicks']}")
-print(f"  Всего показов: {dashboard_data['totals']['total_impressions']}")
-print(f"  Общая стоимость: {dashboard_data['totals']['total_cost']:.2f} USD")
-print(f"  Всего конверсий: {dashboard_data['totals']['total_conversions']}")
-print(f"  Средний CTR: {dashboard_data['totals']['total_ctr']:.2f}%")
-print(f"  Средняя цена за клик: {dashboard_data['totals']['avg_cpc']:.2f} USD")
-print(f"  Общий коэффициент конверсии: {dashboard_data['totals']['total_conv_rate']:.2f}%")
-print(f"  Средняя стоимость конверсии: {dashboard_data['totals']['avg_cost_per_conv']:.2f} USD")
-
-print("\nИнсайты и рекомендации:")
-if dashboard_data['insights']:
-    for insight in dashboard_data['insights']:
-        print(f"- {insight}")
-else:
-    print("Пока не удалось выявить значимых инсайтов для рекомендаций.")
-
-print("\nДанные для круговой диаграммы (JSON):")
-print(json.dumps(dashboard_data['pieChartData'], indent=2))
-
-print("\nДанные для столбчатой диаграммы (JSON):")
-print(json.dumps(dashboard_data['barChartData'], indent=2))
