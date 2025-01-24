@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles.css';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -23,117 +23,16 @@ Ad group,Campaign,Campaign state,Ad group state,Campaign type,Campaign subtype,L
 отели алматы,Oi Search Отели и брони,Enabled,Enabled,Search,All features,--,--,Maximize Conversions,0,0,--,0,0,--,0,0,--,0,0,--,--,--,--,1,0,3,0,44,561,"7,84%",USD,"0,22","9,83","18,62%","56,16%",3,0,"3,28","6,82%"
 """;
 
-const cleanValue = (value) => {
-    let cleanedValue = value.replace('%', '').replace('"', '').replace(',', '.');
-    if (cleanedValue === 'USD' || cleanedValue === '--') {
-        return '0';
-    }
-    return cleanedValue;
-}
-
-const parseCSVData = (csvString) => {
-    const data = [];
-    const lines = csvString.trim().split('\n');
-    const headers = lines[2].split(',').map(header => header.trim());
-    for (let i = 3; i < lines.length; i++) {
-        const row = lines[i].split(',');
-        if (row && row[0] !== 'Ad group performance') {
-            const adGroupData = {};
-            for (let j = 0; j < headers.length; j++) {
-                const header = headers[j];
-                let value = row[j] ? row[j].trim() : '';
-                const cleanedValue = cleanValue(value);
-                if (["Clicks", "Impr.", "Conversions"].includes(header)) {
-                    adGroupData[header] = parseInt(parseFloat(cleanedValue));
-                } else if (["CTR", "Avg. CPC", "Cost", "Impr. (Abs. Top) %", "Impr. (Top) %", "Cost / conv.", "Conv. rate"].includes(header)) {
-                    adGroupData[header] = parseFloat(cleanedValue);
-                } else {
-                    adGroupData[header] = value;
-                }
-            }
-            data.push(adGroupData);
-        }
-    }
-    return data;
-};
-
-const calculateTotals = (data) => {
-    let totalClicks = 0;
-    let totalImpressions = 0;
-    let totalCost = 0;
-    let totalConversions = 0;
-
-    data.forEach(item => {
-        totalClicks += item['Clicks'];
-        totalImpressions += item['Impr.'];
-        totalCost += item['Cost'];
-        totalConversions += item['Conversions'];
-    });
-
-    const totalCtr = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
-    const avgCpc = totalClicks > 0 ? totalCost / totalClicks : 0;
-    const totalConvRate = totalClicks > 0 ? (totalConversions / totalClicks) * 100 : 0;
-    const avgCostPerConv = totalConversions > 0 ? totalCost / totalConversions : 0;
-
-    return {
-        total_clicks: totalClicks,
-        total_impressions: totalImpressions,
-        total_cost: totalCost,
-        total_conversions: totalConversions,
-        total_ctr: totalCtr,
-        avg_cpc: avgCpc,
-        total_conv_rate: totalConvRate,
-        avg_cost_per_conv: avgCostPerConv
-    };
-};
-
-const analyzePerformance = (data) => {
-    const insights = [];
-
-    const noConversionAdGroups = data.filter(item => item.Conversions === 0 && parseFloat(item.Cost) > 0).map(item => item["Ad group"]);
-    if (noConversionAdGroups.length > 0) {
-        insights.push(
-            `Группы объявлений с расходами, но без конверсий: ${noConversionAdGroups.join(', ')}. Рекомендовано проверить релевантность и посадочные страницы.`
-        );
-    }
-
-    const highCpcConvAdGroups = data.filter(item => item.Conversions > 0 && parseFloat(item["Cost / conv."]) > 8).map(item => item["Ad group"]);
-    if (highCpcConvAdGroups.length > 0) {
-        insights.push(
-            `Группы объявлений с высокой стоимостью конверсии: ${highCpcConvAdGroups.join(', ')}. Необходимо проанализировать ставки и качество объявлений.`
-        );
-    }
-
-    const highCtrLowConvAdGroups = data.filter(item => parseFloat(item.CTR) > 15 && parseFloat(item["Conv. rate"]) < 2 && item.Clicks > 10).map(item => item["Ad group"]);
-    if (highCtrLowConvAdGroups.length > 0) {
-        insights.push(
-            `Группы объявлений с высоким CTR, но низкой конверсией: ${highCtrLowConvAdGroups.join(', ')}. Проверьте соответствие объявлений и посадочных страниц, проблемы с UX.`
-        );
-    }
-
-    const topConversionAdGroups = data.filter(item => item.Conversions > 0)
-        .sort((a, b) => b.Conversions - a.Conversions)
-        .slice(0, 3)
-        .map(item => item["Ad group"]);
-    if (topConversionAdGroups.length > 0) {
-        insights.push(
-            `Топ-3 групп объявлений по конверсиям: ${topConversionAdGroups.join(', ')}. Рассмотрите масштабирование: увеличьте бюджеты или расширьте таргетинг.`
-        );
-    }
-
-    return insights;
-};
-
 const parsedData = parseCSVData(csvData);
 const totals = calculateTotals(parsedData);
 const insights = analyzePerformance(parsedData);
 
-// Данные для круговой диаграммы
+// Данные для круговой диаграммы (распределение расходов)
 const pieChartData = parsedData.sort((a, b) => parseFloat(b.Cost) - parseFloat(a.Cost)).slice(0, 5).map(item => ({ name: item["Ad group"], value: parseFloat(item.Cost) }));
 const otherCost = totals.total_cost - pieChartData.reduce((sum, item) => sum + item.value, 0);
 pieChartData.push({ name: 'Остальные', value: otherCost > 0 ? otherCost : 0 });
 
-// Данные для столбчатой диаграммы
+// Данные для столбчатой диаграммы (CTR vs Conv. Rate)
 const barChartData = parsedData.sort((a, b) => b['Impr.'] - a['Impr.']).slice(0, 10).map(item => ({ name: item["Ad group"], ctr: parseFloat(item.CTR), convRate: parseFloat(item["Conv. rate"])}))
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#a4de6c', '#d0ed57', '#ffc658'];
 
@@ -238,4 +137,71 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
   );
 }
 
-export default App;
+function clean_value(value) {
+    let cleanedValue = value.replace('%', '').replace('"', '').replace(',', '.');
+    if (cleanedValue === 'USD' || cleanedValue === '--') {
+        return '0';
+    }
+    return cleanedValue;
+}
+
+function parseCSVData(csvString) {
+    const data = [];
+    const lines = csvString.trim().split('\n');
+    const headers = lines[2].split(',').map(header => header.trim());
+    for (let i = 3; i < lines.length; i++) {
+        const row = lines[i].split(',');
+        if (row && row[0] !== 'Ad group performance') {
+            const adGroupData = {};
+            for (let j = 0; j < headers.length; j++) {
+                const header = headers[j];
+                let value = row[j] ? row[j].trim() : '';
+                const cleanedValue = cleanValue(value);
+                if (["Clicks", "Impr.", "Conversions"].includes(header)) {
+                    adGroupData[header] = parseInt(parseFloat(cleanedValue));
+                } else if (["CTR", "Avg. CPC", "Cost", "Impr. (Abs. Top) %", "Impr. (Top) %", "Cost / conv.", "Conv. rate"].includes(header)) {
+                    adGroupData[header] = parseFloat(cleanedValue);
+                } else {
+                    adGroupData[header] = value;
+                }
+            }
+            data.push(adGroupData);
+        }
+    }
+    return data;
+};
+
+function calculateTotals(data) {
+    let totalClicks = 0;
+    let totalImpressions = 0;
+    let totalCost = 0;
+    let totalConversions = 0;
+
+    data.forEach(item => {
+        totalClicks += item['Clicks'];
+        totalImpressions += item['Impr.'];
+        totalCost += item['Cost'];
+        totalConversions += item['Conversions'];
+    });
+
+    const totalCtr = (totalClicks / totalImpressions) * 100;
+    const avgCpc = totalClicks > 0 ? totalCost / totalClicks : 0;
+    const totalConvRate = (totalConversions / totalClicks) * 100;
+    const avgCostPerConv = totalConversions > 0 ? totalCost / totalConversions : 0;
+
+    return {
+        total_clicks: totalClicks,
+        total_impressions: totalImpressions,
+        total_cost: totalCost,
+        total_conversions: totalConversions,
+        total_ctr: totalCtr,
+        avg_cpc: avgCpc,
+        total_conv_rate: totalConvRate,
+        avg_cost_per_conv: avgCostPerConv
+    };
+};
+
+function analyzePerformance(data) {
+    const insights = [];
+
+    const noConversionAdGroups = data.filter(item => item.Conversions === 0
